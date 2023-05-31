@@ -9,6 +9,7 @@ cc_binary(
     name = "calculator",
     srcs = ["main.c"],
     deps = [
+        ":calculator_lib",
         "//main:calculator_lib",
     ],
 )

@@ -10,6 +10,5 @@ cc_binary(
     srcs = ["main.c"],
     deps = [
         ":calculator_lib",
-        "//main:calculator_lib",
     ],
 )

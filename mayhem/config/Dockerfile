@@ -1,4 +1,4 @@
-FROM ubuntu as builder
+FROM ubuntu AS builder
 
 # Install required packages
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y curl git unzip clang jq

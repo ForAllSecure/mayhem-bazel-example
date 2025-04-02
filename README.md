@@ -102,7 +102,15 @@ The code coverage will be downloaded to `bazel-bin/test/combined_test_calculator
 If you'd like to generate coverage manually, you can do this with Bazel, but you'll have to run each individual file under the `testsuite` directory. An easy way to do this is:
 
 ```bash
-for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel coverage --combined_report=lcov //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
+for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel coverage --combined_report=lcov --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
+```
+
+### Local testing
+
+If you don't want to generate coverage but just want to run the tests locally, simply change `bazel coverage` to `bazel test`:
+
+```bash
+for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel test --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
 ```
 
 # Gtest Integration

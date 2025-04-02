@@ -10,9 +10,15 @@
 // its methods are called in the same order, with the same arguments.
 //===----------------------------------------------------------------------===//
 // 
-// Note: Hi! I am renaming this slightly to avoid potential naming conflicts if a 
-// user is actually using clang or the builtin FDP. Definitely not claiming this 
-// as my own!
+// Note: This file is a modified version of the original LLVM FuzzedDataProvider
+// Modifications are as follows:
+//
+// - Renamed the class and include guard to avoid potential naming conflicts.
+//
+// These modifications are not affiliated with the LLVM Project. This was 
+// mainly to ensure that the code compiles regardless if Clang is actually
+// being used.
+//
 
 #ifndef GENERIC_FUZZED_DATA_PROVIDER_H
 #define GENERIC_FUZZED_DATA_PROVIDER_H

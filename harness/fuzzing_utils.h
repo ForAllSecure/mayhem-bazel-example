@@ -2,14 +2,14 @@
 #define FUZZING_UTILS_H
 
 #include "entire_file_utils.h"
-#include <fuzzer/FuzzedDataProvider.h>
+#include "fuzzed_data_provider.h"
 
-extern FuzzedDataProvider* global_provider;
+extern fuzzed_data_provider* global_provider;
 
 #define INIT_FUZZ_TEST \
-    FuzzedDataProvider& provider = *global_provider; \
+    fuzzed_data_provider& provider = *global_provider; \
     if (!global_provider) { \
-        fprintf(stderr, "Error: FuzzedDataProvider not initialized!\n"); \
+        fprintf(stderr, "Error: fuzzed_data_provider not initialized!\n"); \
         return; \
     }
 

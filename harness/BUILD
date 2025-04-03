@@ -7,6 +7,6 @@ cc_library(
 
 cc_library(
     name = "fuzzing_utils",
-    hdrs = ["entire_file_utils.h", "fuzzing_utils.h"],
+    hdrs = ["entire_file_utils.h", "fuzzing_utils.h", "fuzzed_data_provider.h"],
     srcs = ["fuzzing_utils.cc"],
 )

@@ -46,12 +46,25 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
 
-      - name: Run bazel for Mayhem package
+      - name: Log into Mayhem
         run: |
-          bazel build --action_env=MAYHEM_URL=${{ env.MAYHEM_URL }} --action_env=MAYHEM_TOKEN=${{ secrets.MAYHEM_TOKEN }} //mayhem:run_test_calculator_package
+          echo "Logging into Mayhem"
+          mkdir "%USERPROFILE%\.config/mayhem"
+          echo [DEFAULT] > "%USERPROFILE%\.config\mayhem\mayhem"
+          echo version=0 >> "%USERPROFILE%\.config\mayhem\mayhem"
+          echo url=%MAYHEM_URL% >> "%USERPROFILE%\.config\mayhem\mayhem"
+          echo token=%MAYHEM_TOKEN% >> "%USERPROFILE%\.config\mayhem\mayhem"
+        shell: cmd
         env:
           MAYHEM_URL: ${{ env.MAYHEM_URL }}
           MAYHEM_TOKEN: ${{ secrets.MAYHEM_TOKEN }}
+
+      - name: Run bazel for Mayhem package
+        run: |
+          bazel build --action_env=MAYHEM_URL=${{ env.MAYHEM_URL }} --action_env=XDG_CONFIG_HOME="%USERPROFILE%\.config" //mayhem:run_test_calculator_package
+        shell: cmd
+        env:
+          MAYHEM_URL: ${{ env.MAYHEM_URL }}
 
       # - name: Install LLVM
       #   run: |
@@ -62,12 +75,11 @@ jobs:
       #   run: |
       #     bazel clean --expunge
       #     set USE_CLANG_CL=1
-      #     bazel build --compiler=clang-cl --config=libfuzzer --action_env=MAYHEM_URL=${{ env.MAYHEM_URL }} --action_env=MAYHEM_TOKEN=${{ secrets.MAYHEM_TOKEN }} //mayhem:run_package_fuzz_calculator
+      #     bazel build --compiler=clang-cl --config=libfuzzer --action_env=MAYHEM_URL=${{ env.MAYHEM_URL }} --action_env=XDG_CONFIG_HOME="%USERPROFILE%\.config" //mayhem:run_package_fuzz_calculator
 
       # - name: Run coverage manually
       #   run: |
-      #     bazel build --action_env=MAYHEM_URL=${{ env.MAYHEM_URL }} --action_env=MAYHEM_TOKEN=${{ secrets.MAYHEM_TOKEN }} //test:download_combined_test_calculator_results
+      #     bazel build --action_env=MAYHEM_URL=${{ env.MAYHEM_URL }} --action_env=XDG_CONFIG_HOME="%USERPROFILE%\.config" //test:download_combined_test_calculator_results
       #     for /f %%i in ('dir /b .\bazel-bin\test\combined_test_calculator-pkg\testsuite') do bazel coverage --combined_report=lcov //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/%%i
       #   env:
       #     MAYHEM_URL: ${{ env.MAYHEM_URL }}
-      #     MAYHEM_TOKEN: ${{ secrets.MAYHEM_TOKEN }}

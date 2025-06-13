@@ -6,6 +6,19 @@ pyenv install 3.9.0
 pyenv global 3.9.0
 ```
 
+### Mayhem Config Home
+
+It is required to authenticate against the Mayhem server. This is done with a Mayhem configuration file, and specified with the config home directory. To set your Mayhem config home on Linux, pass:
+```
+--action_env=XDG_CONFIG_HOME="$HOME/.config"
+```
+to your `bazel build` command or your `.bazelrc`. On Windows, pass:
+```
+--action_env=XDG_CONFIG_HOME="%USERPROFILE%\.config"
+```
+Note that using the default user home directory is not required, as long as the `mayhem` config file is in the specified directory. 
+The remainder of this document assumes a Mayhem config file in the user's home directory on Linux.
+
 # Uninstrumented target
 
 ## To build calculator target
@@ -23,18 +36,10 @@ bazel build //mayhem:package_calculator
 ## To run calculator target
 
 ```bash
-bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //mayhem:run_package_calculator 
+bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //mayhem:run_package_calculator 
 ```
 
 The above works with the test target `//test:test_calculator` as well.
-
-### Note on authentication with Mayhem
-
-Commands like `mayhem run` need to be authenticated to the Mayhem server. You can change specify this with the `--action_env` parameter: 
-
-```bash
-bazel build --action_env=MAYHEM_URL=<blah.mayhem.security> --action_env=MAYHEM_TOKEN=<token> ...
-``` 
 
 # LibFuzzer target
 
@@ -65,7 +70,7 @@ bazel run --config=libfuzzer //mayhem:push_fuzz_calculator_image
 ## To run Mayhem against docker image for libfuzzer target
 
 ```bash
-bazel build --config=libfuzzer --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //mayhem:run_fuzz_calculator_image
+bazel build --config=libfuzzer --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //mayhem:run_fuzz_calculator_image
 ```
 
 # Regression Testing
@@ -73,7 +78,7 @@ bazel build --config=libfuzzer --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=
 ## To run Mayhem on regression tests only, wait for the run to finish, and output a SARIF report
 
 ```bash
-bazel build --config=libfuzzer --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //mayhem:run_test_calculator_package
+bazel build --config=libfuzzer --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //mayhem:run_test_calculator_package
 ```
 
 
@@ -95,14 +100,14 @@ mayhem_download(
 Then, run the following command to download the code coverage:
 
 ```bash
-bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //test:download_combined_test_calculator_results
+bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //test:download_combined_test_calculator_results
 ```
 
 The code coverage will be downloaded to `bazel-bin/test/combined_test_calculator-pkg/coverage.tgz`.
 If you'd like to generate coverage manually, you can do this with Bazel, but you'll have to run each individual file under the `testsuite` directory. An easy way to do this is:
 
 ```bash
-for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel coverage --combined_report=lcov --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
+for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel coverage --combined_report=lcov --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
 ```
 
 ### Local testing
@@ -110,7 +115,7 @@ for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do ba
 If you don't want to generate coverage but just want to run the tests locally, simply change `bazel coverage` to `bazel test`:
 
 ```bash
-for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel test --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
+for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel test --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
 ```
 
 # Gtest Integration
@@ -126,7 +131,7 @@ Under the `test` directory, there are a couple of examples of how to integrate G
 You can run this on Mayhem with:
 
 ```bash
-bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //mayhem:run_test_calculator_package
+bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //mayhem:run_test_calculator_package
 ```
 
 - `harness_utils_test_calculator` is an example inlining harness functionality via a HARNESS macro. The test functions are designed to take a buffer and size, and the HARNESS macro automatically calls the test function with the generated inputs. 
@@ -156,5 +161,5 @@ FUZZ_TEST(CalculatorTest, FuzzTestAdd) {
 Run this on Mayhem with:
 
 ```bash
-bazel build --config=fuzzing_utils --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //mayhem:run_fuzzing_utils_test_calculator_package
+bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //mayhem:run_fuzzing_utils_test_calculator_package
 ```

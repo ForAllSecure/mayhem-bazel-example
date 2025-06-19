@@ -1,6 +1,6 @@
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
-load("@rules_mayhem//mayhem:mayhem.bzl", "mayhem_run", "mayhem_package")
+load("@rules_mayhem//mayhem:mayhem.bzl", "mayhem_run", "mayhem_package", "mayhem_download")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -137,5 +137,18 @@ mayhem_run(
     image = "kubler/glibc",
     target_path = ":fuzzing_utils_test_calculator_package",
     duration = "120",
+    testonly = True,
+)
+
+
+mayhem_download(
+    name = "download_fuzzing_utils_test_calculator_results",
+    owner = "training",
+    project = "mayhem-bazel-example",
+    target = select({
+        "@platforms//os:windows": "fuzzing_utils_test_calculator_package_exe",
+        "//conditions:default": "fuzzing_utils_test_calculator_package",
+    }),
+    output_dir = "fuzzing_utils_test_calculator-pkg",
     testonly = True,
 )

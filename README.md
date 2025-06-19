@@ -36,7 +36,7 @@ bazel build //mayhem:package_calculator
 ## To run calculator target
 
 ```bash
-bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //mayhem:run_package_calculator 
+bazel build //mayhem:run_package_calculator 
 ```
 
 The above works with the test target `//test:test_calculator` as well.
@@ -70,7 +70,7 @@ bazel run --config=libfuzzer //mayhem:push_fuzz_calculator_image
 ## To run Mayhem against docker image for libfuzzer target
 
 ```bash
-bazel build --config=libfuzzer --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //mayhem:run_fuzz_calculator_image
+bazel build --config=libfuzzer //mayhem:run_fuzz_calculator_image
 ```
 
 # Regression Testing
@@ -78,7 +78,7 @@ bazel build --config=libfuzzer --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=
 ## To run Mayhem on regression tests only, wait for the run to finish, and output a SARIF report
 
 ```bash
-bazel build --config=libfuzzer --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //mayhem:run_test_calculator_package
+bazel build --config=libfuzzer //mayhem:run_test_calculator_package
 ```
 
 
@@ -100,14 +100,21 @@ mayhem_download(
 Then, run the following command to download the code coverage:
 
 ```bash
-bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //test:download_combined_test_calculator_results
+bazel build //test:download_combined_test_calculator_results
 ```
 
 The code coverage will be downloaded to `bazel-bin/test/combined_test_calculator-pkg/coverage.tgz`.
-If you'd like to generate coverage manually, you can do this with Bazel, but you'll have to run each individual file under the `testsuite` directory. An easy way to do this is:
+If you'd like to generate coverage manually, you can do this with Bazel. An easy way to do this is:
 
 ```bash
-for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel coverage --combined_report=lcov --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
+bazel coverage //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite
+```
+
+Then generate and view the HTML report with:
+
+```bash
+genhtml --branch-coverage --output coverage "$(bazel info output_path)/_coverage/_coverage_report.dat"
+chromium genhtml/index.html
 ```
 
 ### Local testing
@@ -115,7 +122,13 @@ for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do ba
 If you don't want to generate coverage but just want to run the tests locally, simply change `bazel coverage` to `bazel test`:
 
 ```bash
-for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel test --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
+for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel test //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
+```
+
+Some of the files under `test` were designed to take as input either a file or a directory, so you can also just pass the directory:
+
+```bash
+bazel test //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite
 ```
 
 # Gtest Integration
@@ -131,7 +144,7 @@ Under the `test` directory, there are a couple of examples of how to integrate G
 You can run this on Mayhem with:
 
 ```bash
-bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //mayhem:run_test_calculator_package
+bazel build //mayhem:run_test_calculator_package
 ```
 
 - `harness_utils_test_calculator` is an example inlining harness functionality via a HARNESS macro. The test functions are designed to take a buffer and size, and the HARNESS macro automatically calls the test function with the generated inputs. 
@@ -161,5 +174,5 @@ FUZZ_TEST(CalculatorTest, FuzzTestAdd) {
 Run this on Mayhem with:
 
 ```bash
-bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=XDG_CONFIG_HOME="$HOME/.config" //mayhem:run_fuzzing_utils_test_calculator_package
+bazel build //mayhem:run_fuzzing_utils_test_calculator_package
 ```

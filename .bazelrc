@@ -5,8 +5,9 @@ common --enable_bzlmod
 startup --windows_enable_symlinks
 build --enable_runfiles
 
-# Set default Mayhem URL
-# build --action_env=MAYHEM_URL=<URL>
+# Set default Mayhem URL and config home
+build --action_env=MAYHEM_URL
+build --action_env=XDG_CONFIG_HOME
 
 # Spawn strategy (necessary for rules_mayhem)
 build --spawn_strategy=standalone
@@ -28,3 +29,7 @@ build:libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
 build:uninstrumented --action_env=CC=clang
 build:uninstrumented --action_env=CXX=clang++
 build:uninstrumented --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:replay
+
+# Set coverage options
+coverage --instrument_test_targets 
+coverage --combined_report=lcov

@@ -1,4 +1,6 @@
 #include <vector>
+#include <iostream>
+#include <filesystem>
 #include "fuzzing_utils.h"
 
 // Global variables
@@ -10,26 +12,45 @@ void RegisterFuzzTest(FuzzTestFunc func) {
 }
 
 void RunFuzzTests(const char* file_path) {
-    EntireFile file = read_entire_file_into_memory(file_path);
-    if (!file.contents) {
-        fprintf(stderr, "Failed to open input file: %s\n", file_path);
+    std::filesystem::path input_path(file_path);
+    if (!std::filesystem::exists(input_path)) {
+        std::cerr << "Error: " << file_path << " does not exist.\n" << std::endl;
         return;
     }
-	if (file.len < 2) {
-        fprintf(stderr, "File is too small\n");
-	    return;
+
+    std::vector<std::filesystem::path> files;
+    if (std::filesystem::is_directory(input_path)) {
+        for (const auto &entry : std::filesystem::directory_iterator(input_path)) {
+        if (entry.is_regular_file()) {
+            files.push_back(entry.path());
+        }
+        }
+    } else if (std::filesystem::is_regular_file(input_path)) {
+        files.push_back(input_path);
     }
 
-    const unsigned char* data = reinterpret_cast<const unsigned char*>(file.contents);
-    size_t len = file.len;
+    for (const auto &testcase : files) {
+        EntireFile file = read_entire_file_into_memory(testcase.c_str());
+        if (!file.contents) {
+            std::cerr << "Failed to read file: " << testcase.c_str() << std::endl;
+            return;
+        }
+        if (file.len < 2) {
+            std::cerr << "File is too small." << std::endl;
+            return;
+        }
 
-    // Create and set up FDP instance
-    fuzzed_data_provider provider(data, len);
-    global_provider = &provider;  // Make the provider available to all tests without reinitializing it on every pass
+        const unsigned char* data = reinterpret_cast<const unsigned char*>(file.contents);
+        size_t len = file.len;
 
-    // Run all registered fuzz tests using the same provider
-    for (auto& fuzz_test : fuzz_tests) {
-        fuzz_test();
+        // Create and set up FDP instance
+        fuzzed_data_provider provider(data, len);
+        global_provider = &provider;  // Make the provider available to all tests without reinitializing it on every pass
+
+        // Run all registered fuzz tests using the same provider
+        for (auto& fuzz_test : fuzz_tests) {
+            fuzz_test();
+        }
     }
 
     global_provider = nullptr;  // Reset provider; this whole function should only run once anyways

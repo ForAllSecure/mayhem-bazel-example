@@ -30,9 +30,10 @@ void RunFuzzTests(const char* file_path) {
     }
 
     for (const auto &testcase : files) {
-        EntireFile file = read_entire_file_into_memory(testcase.c_str());
+        const char* testcase_ptr = testcase.string().c_str();
+        EntireFile file = read_entire_file_into_memory(testcase.string().c_str());
         if (!file.contents) {
-            std::cerr << "Failed to read file: " << testcase.c_str() << std::endl;
+            std::cerr << "Failed to read file: " << testcase.string().c_str() << std::endl;
             return;
         }
         if (file.len < 2) {

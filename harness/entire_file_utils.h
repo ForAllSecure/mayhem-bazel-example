@@ -30,7 +30,7 @@ typedef struct EntireFile {
 
      // File was read successfully
  */
-EntireFile read_entire_file_into_memory(const char* path) {
+inline EntireFile read_entire_file_into_memory(const char* path) {
     EntireFile res = {0};
         long int file_size;
         size_t bytes_read;
@@ -88,7 +88,7 @@ error:
         free(res.contents);
     }
 
-    return (EntireFile) {0};
+    return {0};
 }
 
 #endif // ENTIRE_FILE_UTILS_H

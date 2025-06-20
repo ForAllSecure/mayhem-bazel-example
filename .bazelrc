@@ -12,9 +12,6 @@ build --action_env=XDG_CONFIG_HOME
 # Spawn strategy (necessary for rules_mayhem)
 build --spawn_strategy=standalone
 
-# Enable C++17
-build --action_env=BAZEL_CXXOPTS="-std=c++17"
-
 # Define the --config=asan-libfuzzer configuration.
 build:asan-libfuzzer --action_env=CC=clang
 build:asan-libfuzzer --action_env=CXX=clang++

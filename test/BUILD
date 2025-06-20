@@ -16,10 +16,7 @@ cc_test(
   name = "test_calculator",
   size = "small",
   srcs = ["test_calculator.cc"],
-  copts = select({
-        "@platforms//os:windows": ["/std:c++17", "/fsanitize=coverage"],
-        "//conditions:default": ["-ftest-coverage", "-fprofile-arcs"],
-    }),
+  copts = ["-ftest-coverage", "-fprofile-arcs"],
   linkopts = ["-lgcov", "--coverage"],
   deps = [
     "//main:calculator_lib",
@@ -31,10 +28,7 @@ cc_test(
   name = "combined_test_calculator",
   size = "small",
   srcs = ["combined_test_calculator.cc"],
-  copts = select({
-        "@platforms//os:windows": ["/std:c++17", "/fsanitize=coverage"],
-        "//conditions:default": ["-ftest-coverage", "-fprofile-arcs"],
-    }),
+  copts = ["-ftest-coverage", "-fprofile-arcs"],
   linkopts = ["-lgcov", "--coverage"],
   deps = [
     "@googletest//:gtest_main",
@@ -47,10 +41,7 @@ cc_test(
   name = "harness_utils_test_calculator",
   size = "small",
   srcs = ["harness_utils_test_calculator.cc"],
-  copts = select({
-          "@platforms//os:windows": ["/std:c++17", "/fsanitize=coverage"],
-          "//conditions:default": ["-ftest-coverage", "-fprofile-arcs"],
-      }),
+  copts = ["-ftest-coverage", "-fprofile-arcs"],
   linkopts = ["-lgcov", "--coverage"],
   deps = [
     "@googletest//:gtest_main",
@@ -64,10 +55,7 @@ cc_test(
   name = "fuzzing_utils_test_calculator",
   size = "small",
   srcs = ["fuzzing_utils_test_calculator.cc"],
-  copts = select({
-        "@platforms//os:windows": ["/std:c++17", "/fsanitize=coverage"],
-        "//conditions:default": ["-ftest-coverage", "-fprofile-arcs"],
-    }),
+  copts = ["-ftest-coverage", "-fprofile-arcs"],
   linkopts = ["-lgcov", "--coverage"],
   deps = [
     "@googletest//:gtest_main",

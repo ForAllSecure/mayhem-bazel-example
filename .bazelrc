@@ -13,7 +13,7 @@ build --action_env=XDG_CONFIG_HOME
 build --spawn_strategy=standalone
 
 # Enable C++17
-build --cxxopt=-std=c++17
+build --action_env=BAZEL_CXXOPTS="-std=c++17"
 
 # Define the --config=asan-libfuzzer configuration.
 build:asan-libfuzzer --action_env=CC=clang

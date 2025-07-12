@@ -29,6 +29,10 @@ RUN mkdir out
 # Make extra sure we are using Python 3.9
 ENV PYTHON_BIN_PATH=/usr/bin/python3.9
 
+# Fix repo cache failure
+RUN echo "" >> .bazelrc
+RUN echo "build --repo_contents_cache=" >> .bazelrc
+
 #Build libFuzzer target
 RUN bazel build --config=asan-libfuzzer //fuzz:fuzz_calculator_run
 RUN cp ./bazel-bin/fuzz/fuzz_calculator_bin ./out/fuzz_calculator_libfuzzer

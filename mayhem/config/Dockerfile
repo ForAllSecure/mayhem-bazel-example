@@ -34,7 +34,7 @@ RUN bazel build --repo_contents_cache= --config=asan-libfuzzer //fuzz:fuzz_calcu
 RUN cp ./bazel-bin/fuzz/fuzz_calculator_bin ./out/fuzz_calculator_libfuzzer
 
 #Build uninst target
-RUN bazel clean
+RUN bazel clean --repo_contents_cache=
 RUN bazel build --repo_contents_cache= --config=uninstrumented //fuzz:fuzz_calculator_run
 RUN cp ./bazel-bin/fuzz/fuzz_calculator_bin ./out/fuzz_calculator_uninstrumented
 

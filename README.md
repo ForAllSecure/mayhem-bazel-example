@@ -19,6 +19,21 @@ to your `bazel build` command or your `.bazelrc`. On Windows, pass:
 Note that using the default user home directory is not required, as long as the `mayhem` config file is in the specified directory. 
 The remainder of this document assumes a Mayhem config file in the user's home directory on Linux.
 
+
+#### Windows config settings
+
+If you're running Windows, you'll also need to add the following:
+
+```
+# Enable platform-specific features
+common --enable_platform_specific_config=true
+
+# Windows settings
+startup --windows_enable_symlinks
+startup --output_user_root=C:/tmp  # see https://bazel.build/versions/6.3.0/configure/windows#long-path-issues
+common:windows --enable_runfiles
+```
+
 # Uninstrumented target
 
 ## To build calculator target

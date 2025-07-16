@@ -61,6 +61,11 @@ jobs:
           MAYHEM_URL: ${{ env.MAYHEM_URL }}
           MAYHEM_TOKEN: ${{ secrets.MAYHEM_TOKEN }}
 
+      - name: Add Windows-specific .bazelrc setting
+        run: |
+          powershell -Command "(Get-Content .bazelrc) | ForEach-Object { $_; if ($_ -match '# Windows stuff') { 'startup --output_user_root=C:/tmp' } } | Set-Content .bazelrc"
+        shell: cmd
+
       - name: Run bazel for Mayhem package
         run: |
           bazel build //mayhem:run_test_calculator_package

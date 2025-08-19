@@ -4,7 +4,7 @@
 #include <fstream>
 #include <gtest/gtest.h>
 
-#include "harness/harness_utils.h"
+#include "harness_utils/harness_utils.h"
 
 extern "C" {
   #include "main/calculator.h"

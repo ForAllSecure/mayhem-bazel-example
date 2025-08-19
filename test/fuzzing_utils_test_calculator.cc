@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <gtest/gtest.h>
 
-#include "harness/fuzzing_utils.h"
+#include "harness_utils/fuzzing_utils/fuzzing_utils.h"
 
 extern "C" {
   #include "main/calculator.h"

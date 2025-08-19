@@ -1,4 +1,4 @@
-#include "entire_file_utils.h"
+#include "fuzzing_utils/entire_file_utils.h"
 
 typedef int (*HarnessFunction)(const char*, size_t);
 

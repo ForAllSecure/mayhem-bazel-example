@@ -1,3 +1,3 @@
-[submodule "fuzzing_utils"]
+[submodule "harness_utils/fuzzing_utils"]
 	path = harness_utils/fuzzing_utils
 	url = git@github.com:xansec/fuzzing-utils.git

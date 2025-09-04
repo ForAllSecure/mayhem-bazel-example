@@ -757,14 +757,14 @@
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {
-          "MAYHEM_URL": "https://mayhem.asux.aptiv.com"
+          "MAYHEM_URL": "https://app.mayhem.security"
         },
         "generatedRepoSpecs": {
           "mayhem_cli_linux": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
             "attributes": {
               "urls": [
-                "https://mayhem.asux.aptiv.com/cli/Linux/mayhem"
+                "https://app.mayhem.security/cli/Linux/mayhem"
               ],
               "executable": true
             }
@@ -773,7 +773,7 @@
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
             "attributes": {
               "urls": [
-                "https://mayhem.asux.aptiv.com/cli/Windows/mayhem.exe"
+                "https://app.mayhem.security/cli/Windows/mayhem.exe"
               ],
               "executable": true
             }

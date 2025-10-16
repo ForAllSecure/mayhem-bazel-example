@@ -132,7 +132,7 @@ genhtml --branch-coverage --output coverage "$(bazel info output_path)/_coverage
 chromium coverage/index.html
 ```
 
-## Code Coverage (libFuzzer)
+### Code Coverage (libFuzzer)
 
 libFuzzer uses built-in coverage reporting. You can use the above method as described, or you can use libFuzzer's built-in method. Both should work.
 
@@ -166,7 +166,7 @@ llvm-cov show $(bazel info output_path)/k8-fastbuild/bin/fuzz/fuzz_calculator_bi
 ```
 
 
-### Local testing
+## Local testing
 
 If you don't want to generate coverage but just want to run the tests locally, simply change `bazel coverage` to `bazel test`:
 

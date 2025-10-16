@@ -129,8 +129,42 @@ Then generate and view the HTML report with:
 
 ```bash
 genhtml --branch-coverage --output coverage "$(bazel info output_path)/_coverage/_coverage_report.dat"
-chromium genhtml/index.html
+chromium coverage/index.html
 ```
+
+## Code Coverage (libFuzzer)
+
+libFuzzer uses built-in coverage reporting. You can use the above method as described, or you can use libFuzzer's built-in method. Both should work.
+
+First: make sure you include the following`copts` and `linkopts` in your `cc_fuzz_test` rule:
+
+```
+cc_fuzz_test(
+    name = "fuzz_calculator",
+    srcs = ["fuzz_calculator.cc"],
+    copts = ["-fprofile-instr-generate", "-fcoverage-mapping"],
+    linkopts = ["-fprofile-instr-generate", "-fcoverage-mapping"],
+    deps = [
+        "//main:calculator_lib",
+    ]
+)
+
+```
+
+Then you can run `bazel coverage`. This will generate a traditional coverage.dat for gcov, as well as a *.profraw for llvm-cov.
+
+```bash
+bazel coverage --config libfuzzer //fuzz:fuzz_calculator --test_arg="test/combined_test_calculator-pkg/testsuite"
+```
+
+then you can view coverage in the terminal with:
+
+```bash
+llvm-profdata merge -sparse $(bazel info output_path)/k8-fastbuild/testlogs/_coverage/fuzz/fuzz_calculator/test/*.profraw -o fuzz_calculator.profdata
+llvm-cov report $(bazel info output_path)/k8-fastbuild/bin/fuzz/fuzz_calculator_bin -instr-profile=fuzz_calculator.profdata
+llvm-cov show $(bazel info output_path)/k8-fastbuild/bin/fuzz/fuzz_calculator_bin -instr-profile=fuzz_calculator.profdata
+```
+
 
 ### Local testing
 

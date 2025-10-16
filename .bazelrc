@@ -40,5 +40,6 @@ build:uninstrumented --action_env=CXX=clang++
 build:uninstrumented --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:replay
 
 # Set coverage options
-coverage --instrument_test_targets 
+coverage --action_env=LLVM_PROFILE_FILE="fuzz_calculator.profraw"
+coverage --instrument_test_targets
 coverage --combined_report=lcov

@@ -9,8 +9,8 @@ startup --windows_enable_symlinks
 common:windows --enable_runfiles
 
 # Set default Mayhem URL and config home
-build --action_env=MAYHEM_URL
-build --action_env=XDG_CONFIG_HOME
+common --action_env=MAYHEM_URL
+common --action_env=XDG_CONFIG_HOME
 
 # Spawn strategy (necessary for rules_mayhem)
 build --spawn_strategy=standalone
@@ -24,6 +24,8 @@ common:linux --host_cxxopt=-std=c++17
 # Define the --config=asan-libfuzzer configuration.
 build:asan-libfuzzer --action_env=CC=clang
 build:asan-libfuzzer --action_env=CXX=clang++
+build:asan-libfuzzer --repo_env=CC=clang
+build:asan-libfuzzer --repo_env=CXX=clang++
 build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:libfuzzer
 build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
 build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=asan
@@ -31,12 +33,16 @@ build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=asan
 # Define the --config=libfuzzer configuration.
 build:libfuzzer --action_env=CC=clang
 build:libfuzzer --action_env=CXX=clang++
+build:libfuzzer --repo_env=CC=clang
+build:libfuzzer --repo_env=CXX=clang++
 build:libfuzzer --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:libfuzzer
 build:libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
 
 # Define the --config=uninstrumented configuration.
 build:uninstrumented --action_env=CC=clang
 build:uninstrumented --action_env=CXX=clang++
+build:uninstrumented --repo_env=CC=clang
+build:uninstrumented --repo_env=CXX=clang++
 build:uninstrumented --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:replay
 
 # Set coverage options

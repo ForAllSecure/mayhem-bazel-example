@@ -51,7 +51,7 @@ bazel build //mayhem:package_calculator
 ## To run calculator target
 
 ```bash
-bazel build //mayhem:run_package_calculator 
+bazel run //mayhem:run_package_calculator 
 ```
 
 The above works with the test target `//test:test_calculator` as well.
@@ -85,7 +85,7 @@ bazel run --config=libfuzzer //mayhem:push_fuzz_calculator_image
 ## To run Mayhem against docker image for libfuzzer target
 
 ```bash
-bazel build --config=libfuzzer //mayhem:run_fuzz_calculator_image
+bazel run --config=libfuzzer //mayhem:run_fuzz_calculator_image
 ```
 
 # Regression Testing
@@ -93,7 +93,7 @@ bazel build --config=libfuzzer //mayhem:run_fuzz_calculator_image
 ## To run Mayhem on regression tests only, wait for the run to finish, and output a SARIF report
 
 ```bash
-bazel build --config=libfuzzer //mayhem:run_test_calculator_package
+bazel run --config=libfuzzer //mayhem:run_test_calculator_package
 ```
 
 
@@ -193,7 +193,7 @@ Under the `test` directory, there are a couple of examples of how to integrate G
 You can run this on Mayhem with:
 
 ```bash
-bazel build //mayhem:run_test_calculator_package
+bazel run //mayhem:run_test_calculator_package
 ```
 
 - `harness_utils_test_calculator` is an example inlining harness functionality via a HARNESS macro. The test functions are designed to take a buffer and size, and the HARNESS macro automatically calls the test function with the generated inputs. 

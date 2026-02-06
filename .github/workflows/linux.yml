@@ -75,8 +75,7 @@ jobs:
 
       - name: Run Bazel for Mayhem with Docker image
         run: |
-          bazel run --config=libfuzzer //mayhem:push_fuzz_calculator_image
-          bazel build --config=libfuzzer //mayhem:run_fuzz_calculator_image
+          bazel run --config=libfuzzer //mayhem:run_fuzz_calculator_image
         shell: bash
         env:
           MAYHEM_URL: ${{ env.MAYHEM_URL }}
@@ -85,7 +84,7 @@ jobs:
 
       - name: Run bazel for Mayhem package
         run: |
-          bazel build //mayhem:run_test_calculator_package
+          bazel run //mayhem:run_test_calculator_package
         shell: bash
         env:
           MAYHEM_URL: ${{ env.MAYHEM_URL }}

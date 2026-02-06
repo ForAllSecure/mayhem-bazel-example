@@ -1,5 +1,5 @@
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_load")
 load("@rules_mayhem//mayhem:mayhem.bzl", "mayhem_run", "mayhem_package", "mayhem_download")
 
 package(default_visibility = ["//visibility:public"])
@@ -10,6 +10,7 @@ pkg_tar(
     name = "fuzz_calculator_tar",
     srcs = ["//fuzz:fuzz_calculator_bin"],
     mode = "0755",
+    extension = "tar.gz",
     testonly = True,
 )
 
@@ -23,8 +24,8 @@ oci_image(
   workdir = "/",
 )
 
-oci_tarball(
-    name = "fuzz_calculator_tarball",
+oci_load(
+    name = "fuzz_calculator_load",
     image = ":fuzz_calculator_image",
     repo_tags = ["mayhem-bazel-example:latest"],
     testonly = True,
@@ -49,6 +50,8 @@ mayhem_run(
     sanitizer = "true",
     libfuzzer = "false",
     image = "ghcr.io/forallsecure/mayhem-bazel-example:latest",
+    image_dependency = ":push_fuzz_calculator_image",
+    testonly = True,
 )
 
 # Calculator Standalone binary example

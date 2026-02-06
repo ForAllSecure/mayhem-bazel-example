@@ -68,7 +68,7 @@ jobs:
 
       - name: Run bazel for Mayhem package
         run: |
-          bazel build //mayhem:run_test_calculator_package
+          bazel run //mayhem:run_test_calculator_package
         shell: cmd
         env:
           MAYHEM_URL: ${{ env.MAYHEM_URL }}

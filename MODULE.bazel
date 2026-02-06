@@ -1,14 +1,18 @@
-bazel_dep(name = "googletest", version = "1.15.2")
-bazel_dep(name = "rules_pkg", version = "1.0.1")
-bazel_dep(name = "rules_fuzzing", version = "0.5.2")
-bazel_dep(name = "rules_mayhem", version = "0.8.3")
-bazel_dep(name = "rules_cc", version = "0.2.0")
+bazel_dep(name = "googletest", version = "1.17.0.bcr.2")
+bazel_dep(name = "rules_pkg", version = "1.2.0")
+bazel_dep(name = "rules_fuzzing", version = "0.6.0")
+bazel_dep(name = "rules_mayhem", version = "0.8.4")
+bazel_dep(name = "rules_cc", version = "0.2.16")
+
+# Note: This is a temporary workaround to avoid pulling in v2.7.2, as this includes support for
+# the incompatible 'local_config_platform' (see https://github.com/bazelbuild/bazel/issues/22080)
+bazel_dep(name = "aspect_bazel_lib", version = "2.22.5")
 
 rules_mayhem_extension = use_extension("@rules_mayhem//mayhem:extensions.bzl", "rules_mayhem_extension")
 use_repo(rules_mayhem_extension, "bazel_skylib", "mayhem_cli_linux", "mayhem_cli_windows", "platforms", "yq_cli_linux", "yq_cli_windows")
 
 # to-do: fuzztest - see https://github.com/google/fuzztest/issues/950
-bazel_dep(name = "rules_oci", version = "1.8.0")
+bazel_dep(name = "rules_oci", version = "2.2.7")
 
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 
@@ -21,4 +25,4 @@ oci.pull(
 )
 
 # For each oci.pull call, repeat the "name" here to expose them as dependencies.
-use_repo(oci, "ubuntu")
+use_repo(oci, "ubuntu", "ubuntu_linux_amd64")

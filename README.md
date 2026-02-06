@@ -223,5 +223,5 @@ FUZZ_TEST(CalculatorTest, FuzzTestAdd) {
 Run this on Mayhem with:
 
 ```bash
-bazel build //mayhem:run_fuzzing_utils_test_calculator_package
+bazel run //mayhem:run_fuzzing_utils_test_calculator_package
 ```

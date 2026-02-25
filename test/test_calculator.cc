@@ -1,6 +1,7 @@
-#include <assert.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <iostream>
+#include <filesystem>
+#include <vector>
+#include <fstream>
 
 extern "C" {
   #include "main/calculator.h"
@@ -33,27 +34,42 @@ void test_factor_game(int x, int y) {
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
-    printf("Usage: %s <input_file>\n", argv[0]);
+    std::cerr << "Usage: " << argv[0] << " <input_file_or_directory>\n" << std::endl;
     return 1;
   }
 
-  FILE *file = fopen(argv[1], "r");
-  if (file == NULL) {
-    perror("Error opening file");
+  std::filesystem::path input_path(argv[1]);
+  if (!std::filesystem::exists(input_path)) {
+    std::cerr << "Error: " << argv[1] << " does not exist.\n" << std::endl;
     return 1;
   }
 
-  int x, y;
-  char buf[64];
-  fgets(buf, sizeof(buf), file);
-  sscanf(buf, "%d %d", &x, &y);
+  std::vector<std::filesystem::path> files;
+  if (std::filesystem::is_directory(input_path)) {
+    for (const auto &entry : std::filesystem::directory_iterator(input_path)) {
+      if (entry.is_regular_file()) {
+        files.push_back(entry.path());
+      }
+    }
+  } else if (std::filesystem::is_regular_file(input_path)) {
+    files.push_back(input_path);
+  }
 
-  test_add(x, y);
-  test_subtract(x, y);
-  test_multiply(x, y);
-  test_divide(x, y);
-  test_factor_game(x, y);
+  for (const auto &file : files) {
+    int x, y;
+    std::ifstream inputFile(file);
+    if (!inputFile.is_open()) {
+      std::cerr << "Error: Could not open file " << file.string() << "\n" << std::endl;
+      continue;
+    }
 
-  fclose(file);
+    inputFile >> x >> y;
+
+    test_add(x, y);
+    test_subtract(x, y);
+    test_multiply(x, y);
+    test_divide(x, y);
+    test_factor_game(x, y);
+  }
   return 0;
 }

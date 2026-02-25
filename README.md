@@ -6,73 +6,94 @@ pyenv install 3.9.0
 pyenv global 3.9.0
 ```
 
+### Mayhem Config Home
+
+It is required to authenticate against the Mayhem server. This is done with a Mayhem configuration file, and specified with the config home directory. To set your Mayhem config home on Linux, pass:
+```
+--action_env=XDG_CONFIG_HOME="$HOME/.config"
+```
+to your `bazel build` command or your `.bazelrc`. On Windows, pass:
+```
+--action_env=XDG_CONFIG_HOME="%USERPROFILE%\.config"
+```
+Note that using the default user home directory is not required, as long as the `mayhem` config file is in the specified directory. 
+The remainder of this document assumes a Mayhem config file in the user's home directory on Linux.
+
+
+#### Windows config settings
+
+If you're running Windows, you'll also need to add the following:
+
+```
+# Enable platform-specific features
+common --enable_platform_specific_config=true
+
+# Windows settings
+startup --windows_enable_symlinks
+startup --output_user_root=C:/tmp  # see https://bazel.build/versions/6.3.0/configure/windows#long-path-issues
+common:windows --enable_runfiles
+```
+
 # Uninstrumented target
 
 ## To build calculator target
 
-```
+```bash
 bazel build //main:calculator
 ```
 
 ## To package calculator target
 
-```
+```bash
 bazel build //mayhem:package_calculator
 ```
 
 ## To run calculator target
 
-```
-bazel build --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //mayhem:run_package_calculator 
+```bash
+bazel run //mayhem:run_package_calculator 
 ```
 
 The above works with the test target `//test:test_calculator` as well.
-
-### Note on authentication with Mayhem
-
-Commands like `mayhem run` need to be authenticated to the Mayhem server. You can change specify this with the `--action_env` parameter: 
-```
-bazel build --action_env=MAYHEM_URL=<blah.mayhem.security> --action_env=MAYHEM_TOKEN=<token> ...
-``` 
 
 # LibFuzzer target
 
 ## To build libfuzzer target
 
-```
+```bash
 bazel build --config=libfuzzer //fuzz:fuzz_calculator
 ```
 
 ### To run libfuzzer target locally
 
-```
+```bash
 bazel run --config=libfuzzer //fuzz:fuzz_calculator_run
 ```
 
 ## To build docker image with libfuzzer target
 
-```
+```bash
 bazel build --config=libfuzzer //mayhem:fuzz_calculator_image
 ```
 
 ## To push docker image with libfuzzer target
 
-```
+```bash
 bazel run --config=libfuzzer //mayhem:push_fuzz_calculator_image
 ```
 
 ## To run Mayhem against docker image for libfuzzer target
 
-```
-bazel build --config=libfuzzer --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //mayhem:run_fuzz_calculator_image
+```bash
+bazel run --config=libfuzzer //mayhem:run_fuzz_calculator_image
 ```
 
 # Regression Testing
 
 ## To run Mayhem on regression tests only, wait for the run to finish, and output a SARIF report
 
-```
-bazel build --config=libfuzzer --action_env=MAYHEM_URL=$MAYHEM_URL --action_env=MAYHEM_TOKEN=$MAYHEM_TOKEN //mayhem:run_test_calculator_package
+```bash
+bazel run --config=libfuzzer //mayhem:run_test_calculator_package
 ```
 
 
@@ -93,13 +114,114 @@ mayhem_download(
 
 Then, run the following command to download the code coverage:
 
-```
-bazel build --action_env=MAYHEM_URL=${{ env.MAYHEM_URL }} --action_env=MAYHEM_TOKEN=${{ secrets.MAYHEM_TOKEN }} //test:download_combined_test_calculator_results
+```bash
+bazel build //test:download_combined_test_calculator_results
 ```
 
 The code coverage will be downloaded to `bazel-bin/test/combined_test_calculator-pkg/coverage.tgz`.
-If you'd like to generate coverage manually, you can do this with Bazel, but you'll have to run each individual file under the `testsuite` directory. An easy way to do this is:
+If you'd like to generate coverage manually, you can do this with Bazel. An easy way to do this is:
 
 ```bash
-for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel coverage --combined_report=lcov //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
+bazel coverage //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite
+```
+
+Then generate and view the HTML report with:
+
+```bash
+genhtml --branch-coverage --output coverage "$(bazel info output_path)/_coverage/_coverage_report.dat"
+chromium coverage/index.html
+```
+
+### Code Coverage (libFuzzer)
+
+libFuzzer uses built-in coverage reporting. You can use the above method as described, or you can use libFuzzer's built-in method. Both should work.
+
+First: make sure you include the following`copts` and `linkopts` in your `cc_fuzz_test` rule:
+
+```
+cc_fuzz_test(
+    name = "fuzz_calculator",
+    srcs = ["fuzz_calculator.cc"],
+    copts = ["-fprofile-instr-generate", "-fcoverage-mapping"],
+    linkopts = ["-fprofile-instr-generate", "-fcoverage-mapping"],
+    deps = [
+        "//main:calculator_lib",
+    ]
+)
+
+```
+
+Then you can run `bazel coverage`. This will generate a traditional coverage.dat for gcov, as well as a *.profraw for llvm-cov.
+
+```bash
+bazel coverage --config libfuzzer //fuzz:fuzz_calculator --test_arg="test/combined_test_calculator-pkg/testsuite"
+```
+
+then you can view coverage in the terminal with:
+
+```bash
+llvm-profdata merge -sparse $(bazel info output_path)/k8-fastbuild/testlogs/_coverage/fuzz/fuzz_calculator/test/*.profraw -o fuzz_calculator.profdata
+llvm-cov report $(bazel info output_path)/k8-fastbuild/bin/fuzz/fuzz_calculator_bin -instr-profile=fuzz_calculator.profdata
+llvm-cov show $(bazel info output_path)/k8-fastbuild/bin/fuzz/fuzz_calculator_bin -instr-profile=fuzz_calculator.profdata
+```
+
+
+## Local testing
+
+If you don't want to generate coverage but just want to run the tests locally, simply change `bazel coverage` to `bazel test`:
+
+```bash
+for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel test //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
+```
+
+Some of the files under `test` were designed to take as input either a file or a directory, so you can also just pass the directory:
+
+```bash
+bazel test //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite
+```
+
+# Gtest Integration
+
+Under the `test` directory, there are a couple of examples of how to integrate Gtest with Mayhem. 
+
+- `test_calculator` shows basic unit testing without any infrastructure such as Google Test.
+
+- `gtest_calculator` is a simple example of using Gtest, with test fixtures for each function in Calculator.
+
+- `combined_test_calculator` extracts the test fixture behavior into a test function, and conditionally either executes Gtest or the test functions with generated inputs. 
+
+You can run this on Mayhem with:
+
+```bash
+bazel run //mayhem:run_test_calculator_package
+```
+
+- `harness_utils_test_calculator` is an example inlining harness functionality via a HARNESS macro. The test functions are designed to take a buffer and size, and the HARNESS macro automatically calls the test function with the generated inputs. 
+
+- `fuzzing_utils_test_calculator` declares a FUZZ_TEST fixture that providers a fuzzed data provider. The FUZZ_TEST fixtures are conditionally called based on the presence of a file on the command line; otherwise, the TEST fixtures run normally.
+
+For example, if you have a test that looks like:
+
+```cpp
+TEST(CalculatorTest, TestAdd) {
+  test_add(1, 2);
+}
+```
+
+This allows you to create a `FUZZ_TEST` fixture that looks like:
+
+```cpp
+FUZZ_TEST(CalculatorTest, FuzzTestAdd) {
+    INIT_FUZZ_TEST;
+    int x = provider.ConsumeIntegral<int>();
+    int y = provider.ConsumeIntegral<int>();
+    test_add(x, y);
+}
+```
+
+
+Run this on Mayhem with:
+
+```bash
+bazel run //mayhem:run_fuzzing_utils_test_calculator_package
 ```

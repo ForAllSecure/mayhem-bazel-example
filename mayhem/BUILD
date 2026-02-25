@@ -1,6 +1,6 @@
 # load("@rules_pkg//:pkg.bzl", "pkg_tar")
 # load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
-load("@rules_mayhem//mayhem:mayhem.bzl", "mayhem_run", "mayhem_package")
+load("@rules_mayhem//mayhem:mayhem.bzl", "mayhem_run", "mayhem_package", "mayhem_download")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -49,6 +49,8 @@ package(default_visibility = ["//visibility:public"])
 #     image = "ghcr.io/forallsecure/mayhem-bazel-example:latest",
 # )
 
+# Calculator Standalone binary example
+
 mayhem_package(
     name = "calculator_package",
     binary = "//main:calculator",
@@ -65,7 +67,6 @@ mayhem_run(
     image = "ubuntu:latest",
     duration = "120",
     target_path = ":calculator_package",
-
 )
 
 # mayhem_package(
@@ -86,6 +87,8 @@ mayhem_run(
 #     target_path = ":fuzz_calculator_package",
 #     testonly = True,
 # )
+
+# Calculator gtest integration example
 
 mayhem_package(
     name = "test_calculator_package",
@@ -108,5 +111,40 @@ mayhem_run(
     sarif = "test_calculator_package.sarif",
     regression = True,
     duration = "60",
+    testonly = True,
+)
+
+# Calculator FUZZ_TEST macro example
+
+mayhem_package(
+    name = "fuzzing_utils_test_calculator_package",
+    binary = "//test:fuzzing_utils_test_calculator",
+    testonly = True, # Needed to package test binaries
+)
+
+mayhem_run(
+    name = "run_fuzzing_utils_test_calculator_package",
+    owner = "training",
+    project = "mayhem-bazel-example",
+    target = select({
+        "@platforms//os:windows": "fuzzing_utils_test_calculator_package_exe",
+        "//conditions:default": "fuzzing_utils_test_calculator_package",
+    }),
+    image = "kubler/glibc",
+    target_path = ":fuzzing_utils_test_calculator_package",
+    duration = "120",
+    testonly = True,
+)
+
+
+mayhem_download(
+    name = "download_fuzzing_utils_test_calculator_results",
+    owner = "training",
+    project = "mayhem-bazel-example",
+    target = select({
+        "@platforms//os:windows": "fuzzing_utils_test_calculator_package_exe",
+        "//conditions:default": "fuzzing_utils_test_calculator_package",
+    }),
+    output_dir = "fuzzing_utils_test_calculator-pkg",
     testonly = True,
 )

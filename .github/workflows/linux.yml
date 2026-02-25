@@ -34,51 +34,40 @@ jobs:
         with:
           submodules: recursive
 
-      # - name: Log in to the Container registry
-      #   uses: docker/login-action@v3.1.0
-      #   with:
-      #     registry: ${{ env.REGISTRY }}
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Extract metadata (tags, labels) for Docker
-      #   id: meta
-      #   uses: docker/metadata-action@v5.5.1
-      #   with:
-      #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
       - name: Prep Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
       - name: Install Bazel
-        uses: bazel-contrib/setup-bazel@0.8.5
+        uses: bazel-contrib/setup-bazel@0.18.0
         with:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
           repository-cache: true
 
-      # - name: Run Bazel for Mayhem with Docker image
-      #   run: |
-      #     bazel run --config=libfuzzer --action_env=MAYHEM_URL=${{ env.MAYHEM_URL }} --action_env=MAYHEM_TOKEN=${{ secrets.MAYHEM_TOKEN }} //mayhem:push_fuzz_calculator_image
-      #     bazel build --config=libfuzzer --action_env=MAYHEM_URL=${{ env.MAYHEM_URL }} --action_env=MAYHEM_TOKEN=${{ secrets.MAYHEM_TOKEN }} //mayhem:run_fuzz_calculator_image
-      #   env:
-      #     MAYHEM_URL: ${{ env.MAYHEM_URL }}
-      #     MAYHEM_TOKEN: ${{ secrets.MAYHEM_TOKEN }}
+      - name: Run Bazel for Mayhem with Docker image
+        run: |
+          bazel run --config=libfuzzer //mayhem:run_fuzz_calculator_image
+        shell: bash
+        env:
+          MAYHEM_URL: ${{ env.MAYHEM_URL }}
+          XDG_CONFIG_HOME: ${{ env.XDG_CONFIG_HOME }}
 
 
       - name: Run bazel for Mayhem package
         run: |
-          bazel build --action_env=MAYHEM_URL=${{ env.MAYHEM_URL }} --action_env=MAYHEM_TOKEN=${{ secrets.MAYHEM_TOKEN }} //mayhem:run_test_calculator_package
+          bazel run //mayhem:run_test_calculator_package
+        shell: bash
         env:
           MAYHEM_URL: ${{ env.MAYHEM_URL }}
-          MAYHEM_TOKEN: ${{ secrets.MAYHEM_TOKEN }}
+          XDG_CONFIG_HOME: ${{ env.XDG_CONFIG_HOME }}
 
       # - name: Run coverage manually
       #   run: |
-      #     bazel build --action_env=MAYHEM_URL=${{ env.MAYHEM_URL }} --action_env=MAYHEM_TOKEN=${{ secrets.MAYHEM_TOKEN }} //test:download_combined_test_calculator_results
+      #     bazel build //test:download_combined_test_calculator_results
       #     for test in $(ls ./bazel-bin/test/combined_test_calculator-pkg/testsuite); do bazel coverage --combined_report=lcov //test:combined_test_calculator --test_arg=test/combined_test_calculator-pkg/testsuite/$test; done
+      #   shell: bash
       #   env:
       #     MAYHEM_URL: ${{ env.MAYHEM_URL }}
-      #     MAYHEM_TOKEN: ${{ secrets.MAYHEM_TOKEN }}
+      #     XDG_CONFIG_HOME: ${{ env.XDG_CONFIG_HOME }}

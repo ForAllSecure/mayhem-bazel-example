@@ -1,4 +1,4 @@
-FROM ubuntu as builder
+FROM ubuntu AS builder
 
 # Install required packages
 RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y curl git unzip jq gcc g++
@@ -29,9 +29,14 @@ RUN mkdir out
 # Make extra sure we are using Python 3.9
 ENV PYTHON_BIN_PATH=/usr/bin/python3.9
 
+#Build libFuzzer target
+RUN bazel build --repo_contents_cache= --config=asan-libfuzzer //fuzz:fuzz_calculator_run
+RUN cp ./bazel-bin/fuzz/fuzz_calculator_bin ./out/fuzz_calculator_libfuzzer
+
 #Build uninst target
-RUN bazel build //main:calculator
-RUN cp ./bazel-bin/main/calculator ./out/calculator
+RUN bazel clean --repo_contents_cache=
+RUN bazel build --repo_contents_cache= --config=uninstrumented //fuzz:fuzz_calculator_run
+RUN cp ./bazel-bin/fuzz/fuzz_calculator_bin ./out/fuzz_calculator_uninstrumented
 
 FROM ubuntu
 COPY --from=builder /workspace/out/* /

@@ -1,16 +1,27 @@
-# Windows stuff
-startup --windows_enable_symlinks
-build --enable_runfiles
+# Enable platform-specific features
+common --enable_platform_specific_config=true
 
-# Set default Mayhem URL
-# build --action_env=MAYHEM_URL=<URL>
+# Windows stuff
+common:windows --enable_runfiles
+
+# Set default Mayhem URL and config home
+common --action_env=MAYHEM_URL
+common --action_env=XDG_CONFIG_HOME
 
 # Spawn strategy (necessary for rules_mayhem)
 build --spawn_strategy=standalone
 
+# C++17
+common:windows --cxxopt=/std:c++17
+common:windows --host_cxxopt=/std:c++17
+common:linux --cxxopt=-std=c++17
+common:linux --host_cxxopt=-std=c++17
+
 # Define the --config=asan-libfuzzer configuration.
 build:asan-libfuzzer --action_env=CC=clang
 build:asan-libfuzzer --action_env=CXX=clang++
+build:asan-libfuzzer --repo_env=CC=clang
+build:asan-libfuzzer --repo_env=CXX=clang++
 build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:libfuzzer
 build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
 build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=asan
@@ -18,10 +29,19 @@ build:asan-libfuzzer --@rules_fuzzing//fuzzing:cc_engine_sanitizer=asan
 # Define the --config=libfuzzer configuration.
 build:libfuzzer --action_env=CC=clang
 build:libfuzzer --action_env=CXX=clang++
+build:libfuzzer --repo_env=CC=clang
+build:libfuzzer --repo_env=CXX=clang++
 build:libfuzzer --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:libfuzzer
 build:libfuzzer --@rules_fuzzing//fuzzing:cc_engine_instrumentation=libfuzzer
 
 # Define the --config=uninstrumented configuration.
 build:uninstrumented --action_env=CC=clang
 build:uninstrumented --action_env=CXX=clang++
+build:uninstrumented --repo_env=CC=clang
+build:uninstrumented --repo_env=CXX=clang++
 build:uninstrumented --@rules_fuzzing//fuzzing:cc_engine=@rules_fuzzing//fuzzing/engines:replay
+
+# Set coverage options
+coverage --action_env=LLVM_PROFILE_FILE="fuzz_calculator.profraw"
+coverage --instrument_test_targets
+coverage --combined_report=lcov

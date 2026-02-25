@@ -1,4 +1,5 @@
 load("@rules_mayhem//mayhem:mayhem.bzl", "mayhem_download")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -33,6 +34,34 @@ cc_test(
   deps = [
     "@googletest//:gtest_main",
     "//main:calculator_lib",
+  ],
+  data = [":testsuite", "//test:download_combined_test_calculator_results"],
+)
+
+cc_test(
+  name = "harness_utils_test_calculator",
+  size = "small",
+  srcs = ["harness_utils_test_calculator.cc"],
+  copts = ["-ftest-coverage", "-fprofile-arcs"],
+  linkopts = ["-lgcov", "--coverage"],
+  deps = [
+    "@googletest//:gtest_main",
+    "//main:calculator_lib",
+    "//harness_utils:harness_utils",
+  ],
+  data = [":testsuite", "//test:download_combined_test_calculator_results"],
+)
+
+cc_test(
+  name = "fuzzing_utils_test_calculator",
+  size = "small",
+  srcs = ["fuzzing_utils_test_calculator.cc"],
+  copts = ["-ftest-coverage", "-fprofile-arcs"],
+  linkopts = ["-lgcov", "--coverage"],
+  deps = [
+    "@googletest//:gtest_main",
+    "//main:calculator_lib",
+    "//harness_utils:fuzzing_utils",
   ],
   data = [":testsuite", "//test:download_combined_test_calculator_results"],
 )

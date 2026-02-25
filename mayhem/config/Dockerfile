@@ -43,5 +43,12 @@ RUN bazel clean
 RUN bazel build //test:fuzzing_utils_test_calculator
 RUN cp ./bazel-bin/test/fuzzing_utils_test_calculator ./out/fuzzing_utils_test_calculator
 
+# Libs dir
+RUN mkdir -p ./out/libs
+RUN cp ./bazel-bin/_solib_k8/*.so ./out/libs
+
 FROM ubuntu
 COPY --from=builder /workspace/out/* /
+RUN mkdir -p /bazel-libs
+COPY --from=builder /workspace/out/libs/* /bazel-libs
+ENV LD_LIBRARY_PATH=/bazel-libs

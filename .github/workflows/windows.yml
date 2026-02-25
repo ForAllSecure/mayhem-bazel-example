@@ -62,13 +62,29 @@ jobs:
           powershell -Command "(Get-Content .bazelrc) | ForEach-Object { $_; if ($_ -match '# Windows stuff') { 'startup --output_user_root=C:/tmp' } } | Set-Content .bazelrc"
         shell: cmd
 
-      - name: Run bazel for Mayhem package
+      - name: Run bazel for Mayhem package (diagnostics)
         run: |
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
           set "BAZEL_VS=C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
           set "BAZEL_VC=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC"
+          echo --- Environment summary ---
+          set PATH | more
+          echo --- Where tools are ---
+          where cl || echo cl not found
+          where link || echo link not found
+          where ml64 || echo ml64 not found
+          echo --- MSVC vars ---
+          set INCLUDE
+          set LIB
+          set LIBPATH
+          echo --- Bazel info ---
           bazel --version
-          bazel run //mayhem:run_test_calculator_package
+          bazel info release || true
+          bazel info execution_root || true
+          echo --- Bazel build (verbose) ---
+          bazel build //mayhem:run_test_calculator_package --verbose_failures --subcommands --sandbox_debug || echo BUILD_FAILED=%ERRORLEVEL%
+          echo --- Bazel run (verbose) ---
+          bazel run //mayhem:run_test_calculator_package --verbose_failures --subcommands --sandbox_debug || echo RUN_FAILED=%ERRORLEVEL%
         shell: cmd
         env:
           MAYHEM_URL: ${{ env.MAYHEM_URL }}

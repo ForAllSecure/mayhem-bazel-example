@@ -67,27 +67,27 @@ jobs:
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && (
             set "BAZEL_VS=C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
             set "BAZEL_VC=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC"
-            echo --- after vcvars ---
-            echo --- Environment summary ---
+            echo "--- after vcvars ---"
+            echo "--- Environment summary ---""
             set PATH
-            echo --- Where tools are ---
+            echo "--- Where tools are ---"
             where cl || echo cl not found
             where link || echo link not found
             where ml64 || echo ml64 not found
-            echo --- MSVC vars ---
+            echo "--- MSVC vars ---"
             set INCLUDE
             set LIB
             set LIBPATH
-            echo --- Bazel info ---
+            echo "--- Bazel info ---""
             bazel --version
-            echo --- after bazel --version ---
+            echo "--- after bazel --version ---"
             bazel info release || echo BAZEL_INFO_RELEASE_FAILED
-            echo --- Bazel build (verbose) ---
+            echo "--- Bazel build (verbose) ---"
             bazel build //mayhem:run_test_calculator_package --verbose_failures --subcommands --sandbox_debug || echo BUILD_FAILED=%ERRORLEVEL%
-            echo --- after build ---
-            echo --- Bazel run (verbose) ---
+            echo "--- after build ---"
+            echo "--- Bazel run (verbose) ---"
             bazel run //mayhem:run_test_calculator_package --verbose_failures --subcommands --sandbox_debug || echo RUN_FAILED=%ERRORLEVEL%
-            echo --- after run ---
+            echo "--- after run ---"
           )
         shell: cmd
         env:

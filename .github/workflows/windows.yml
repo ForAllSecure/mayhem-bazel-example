@@ -64,6 +64,7 @@ jobs:
 
       - name: Run bazel for Mayhem package
         run: |
+          set BAZEL_VC="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC"
           bazel run //mayhem:run_test_calculator_package
         shell: cmd
         env:

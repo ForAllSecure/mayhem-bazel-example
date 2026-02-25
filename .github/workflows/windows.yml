@@ -38,6 +38,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+      
+      - name: Set up VS Build Tools 2017
+        uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: '2017'
 
       - name: Install Bazel
         uses: bazel-contrib/setup-bazel@0.18.0
@@ -62,37 +67,9 @@ jobs:
           powershell -Command "(Get-Content .bazelrc) | ForEach-Object { $_; if ($_ -match '# Windows stuff') { 'startup --output_user_root=C:/tmp' } } | Set-Content .bazelrc"
         shell: cmd
 
-      - name: Run bazel for Mayhem package (diagnostics)
+      - name: Run bazel for Mayhem package
         run: |
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && (
-            set "BAZEL_VS=C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
-            set "BAZEL_VC=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC"
-            echo "--- after vcvars ---"
-            echo "--- Environment summary ---"
-            set PATH
-            echo "--- Where tools are ---"
-            where cl || echo cl not found
-            where link || echo link not found
-            where ml64 || echo ml64 not found
-            echo "--- MSVC vars ---"
-            set INCLUDE
-            set LIB
-            set LIBPATH
-            echo "--- Bazel info ---""
-            bazel --version
-            echo "--- after bazel --version ---"
-            bazel info release || echo BAZEL_INFO_RELEASE_FAILED
-            echo "--- shutting down any existing bazel server (using empty bazelrc) ---"
-            set "EMPTY_BAZELRC=%TEMP%\\.bazelrc-empty"
-            type NUL > "%EMPTY_BAZELRC%"
-            bazel --bazelrc="%EMPTY_BAZELRC%" shutdown || echo BAZEL_SHUTDOWN_FAILED
-            echo "--- Bazel build (verbose) ---"
-            bazel build //mayhem:run_test_calculator_package --verbose_failures --subcommands --sandbox_debug || echo BUILD_FAILED=%ERRORLEVEL%
-            echo "--- after build ---"
-            echo "--- Bazel run (verbose) ---"
-            bazel run //mayhem:run_test_calculator_package --verbose_failures --subcommands --sandbox_debug || echo RUN_FAILED=%ERRORLEVEL%
-            echo "--- after run ---"
-          )
+          bazel run //mayhem:run_test_calculator_package
         shell: cmd
         env:
           MAYHEM_URL: ${{ env.MAYHEM_URL }}

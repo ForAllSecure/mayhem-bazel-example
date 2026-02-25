@@ -48,11 +48,6 @@ jobs:
             -y --ignore-package-exit-codes=3010
           Write-Host "VS 2017 Build Tools installation completed" 
 
-      - name: Setup VS Build Tools
-        uses: microsoft/setup-msbuild@v2
-        with:
-          vs-version: '2017'
-
       - name: Install Bazel
         uses: bazel-contrib/setup-bazel@0.18.0
 
@@ -78,6 +73,8 @@ jobs:
 
       - name: Run bazel for Mayhem package
         run: |
+          set BAZEL_VC="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC"
+          set BAZEL_VS="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools"
           bazel run //mayhem:run_test_calculator_package
         shell: cmd
         env:

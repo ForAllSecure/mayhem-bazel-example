@@ -30,13 +30,18 @@ RUN mkdir out
 ENV PYTHON_BIN_PATH=/usr/bin/python3.9
 
 #Build libFuzzer target
-RUN bazel build --repo_contents_cache= --config=asan-libfuzzer //fuzz:fuzz_calculator_run
-RUN cp ./bazel-bin/fuzz/fuzz_calculator_bin ./out/fuzz_calculator_libfuzzer
+# RUN bazel build --config=asan-libfuzzer //fuzz:fuzz_calculator_run
+# RUN cp ./bazel-bin/fuzz/fuzz_calculator_bin ./out/fuzz_calculator_libfuzzer
 
 #Build uninst target
-RUN bazel clean --repo_contents_cache=
-RUN bazel build --repo_contents_cache= --config=uninstrumented //fuzz:fuzz_calculator_run
-RUN cp ./bazel-bin/fuzz/fuzz_calculator_bin ./out/fuzz_calculator_uninstrumented
+# RUN bazel clean
+# RUN bazel build --config=uninstrumented //fuzz:fuzz_calculator_run
+# RUN cp ./bazel-bin/fuzz/fuzz_calculator_bin ./out/fuzz_calculator_uninstrumented
+
+#Build test target
+RUN bazel clean
+RUN bazel build //test:fuzzing_utils_test_calculator
+RUN cp ./bazel-bin/test/fuzzing_utils_test_calculator ./out/fuzzing_utils_test_calculator
 
 FROM ubuntu
 COPY --from=builder /workspace/out/* /

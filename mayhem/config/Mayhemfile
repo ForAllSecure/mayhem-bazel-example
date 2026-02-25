@@ -1,7 +1,7 @@
 project: mayhem-bazel-example
 
 # Target name (should be unique within the project)
-target: fuzz-calculator
+target: fuzzing-utils-test-calculator
 
 # Base image to run the binary in.
 image: ghcr.io/<YOUR_ORG>/mayhem-bazel-example
@@ -11,7 +11,6 @@ advanced_triage: false
 
 # List of commands used to test the target
 cmds:
-  - cmd: /calculator @@
+  - cmd: /fuzzing_utils_test_calculator @@
     libfuzzer: false
     sanitizer: false
-

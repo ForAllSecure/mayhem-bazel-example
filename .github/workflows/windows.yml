@@ -82,8 +82,10 @@ jobs:
             bazel --version
             echo "--- after bazel --version ---"
             bazel info release || echo BAZEL_INFO_RELEASE_FAILED
-            echo "--- shutting down any existing bazel server ---"
-            bazel shutdown || echo BAZEL_SHUTDOWN_FAILED
+            echo "--- shutting down any existing bazel server (using empty bazelrc) ---"
+            set "EMPTY_BAZELRC=%TEMP%\\.bazelrc-empty"
+            type NUL > "%EMPTY_BAZELRC%"
+            bazel --bazelrc="%EMPTY_BAZELRC%" shutdown || echo BAZEL_SHUTDOWN_FAILED
             echo "--- Bazel build (verbose) ---"
             bazel build //mayhem:run_test_calculator_package --verbose_failures --subcommands --sandbox_debug || echo BUILD_FAILED=%ERRORLEVEL%
             echo "--- after build ---"

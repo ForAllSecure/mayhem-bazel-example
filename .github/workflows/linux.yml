@@ -46,15 +46,6 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
 
-      - name: Run Bazel for Mayhem with Docker image
-        run: |
-          bazel run --config=libfuzzer //mayhem:run_fuzz_calculator_image
-        shell: bash
-        env:
-          MAYHEM_URL: ${{ env.MAYHEM_URL }}
-          XDG_CONFIG_HOME: ${{ env.XDG_CONFIG_HOME }}
-
-
       - name: Run bazel for Mayhem package
         run: |
           bazel run //mayhem:run_test_calculator_package

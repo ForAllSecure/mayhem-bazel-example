@@ -1,5 +1,5 @@
 load("@rules_mayhem//mayhem:mayhem.bzl", "mayhem_download")
-load("@rules_cc//cc:cc_test.bzl", "cc_test")
+# load("@rules_cc//cc:cc_test.bzl", "cc_test")
 
 package(default_visibility = ["//visibility:public"])
 

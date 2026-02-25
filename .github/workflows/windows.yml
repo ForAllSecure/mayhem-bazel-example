@@ -68,7 +68,7 @@ jobs:
             set "BAZEL_VS=C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
             set "BAZEL_VC=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC"
             echo "--- after vcvars ---"
-            echo "--- Environment summary ---""
+            echo "--- Environment summary ---"
             set PATH
             echo "--- Where tools are ---"
             where cl || echo cl not found
@@ -82,6 +82,8 @@ jobs:
             bazel --version
             echo "--- after bazel --version ---"
             bazel info release || echo BAZEL_INFO_RELEASE_FAILED
+            echo "--- shutting down any existing bazel server ---"
+            bazel shutdown || echo BAZEL_SHUTDOWN_FAILED
             echo "--- Bazel build (verbose) ---"
             bazel build //mayhem:run_test_calculator_package --verbose_failures --subcommands --sandbox_debug || echo BUILD_FAILED=%ERRORLEVEL%
             echo "--- after build ---"

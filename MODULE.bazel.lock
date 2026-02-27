@@ -138,8 +138,8 @@
     "https://bcr.bazel.build/modules/rules_cc/0.2.0/MODULE.bazel": "b5c17f90458caae90d2ccd114c81970062946f49f355610ed89bebf954f5783c",
     "https://bcr.bazel.build/modules/rules_cc/0.2.13/MODULE.bazel": "eecdd666eda6be16a8d9dc15e44b5c75133405e820f620a234acc4b1fdc5aa37",
     "https://bcr.bazel.build/modules/rules_cc/0.2.14/MODULE.bazel": "353c99ed148887ee89c54a17d4100ae7e7e436593d104b668476019023b58df8",
-    "https://bcr.bazel.build/modules/rules_cc/0.2.16/MODULE.bazel": "9242fa89f950c6ef7702801ab53922e99c69b02310c39fb6e62b2bd30df2a1d4",
-    "https://bcr.bazel.build/modules/rules_cc/0.2.16/source.json": "d03d5cde49376d87e14ec14b666c56075e5e3926930327fd5d0484a1ff2ac1cc",
+    "https://bcr.bazel.build/modules/rules_cc/0.2.17/MODULE.bazel": "1849602c86cb60da8613d2de887f9566a6d354a6df6d7009f9d04a14402f9a84",
+    "https://bcr.bazel.build/modules/rules_cc/0.2.17/source.json": "3832f45d145354049137c0090df04629d9c2b5493dc5c2bf46f1834040133a07",
     "https://bcr.bazel.build/modules/rules_cc/0.2.8/MODULE.bazel": "f1df20f0bf22c28192a794f29b501ee2018fa37a3862a1a2132ae2940a23a642",
     "https://bcr.bazel.build/modules/rules_foreign_cc/0.9.0/MODULE.bazel": "c9e8c682bf75b0e7c704166d79b599f93b72cfca5ad7477df596947891feeef6",
     "https://bcr.bazel.build/modules/rules_fuzzing/0.5.2/MODULE.bazel": "40c97d1144356f52905566c55811f13b299453a14ac7769dfba2ac38192337a8",
@@ -177,8 +177,8 @@
     "https://bcr.bazel.build/modules/rules_license/0.0.7/MODULE.bazel": "088fbeb0b6a419005b89cf93fe62d9517c0a2b8bb56af3244af65ecfe37e7d5d",
     "https://bcr.bazel.build/modules/rules_license/1.0.0/MODULE.bazel": "a7fda60eefdf3d8c827262ba499957e4df06f659330bbe6cdbdb975b768bb65c",
     "https://bcr.bazel.build/modules/rules_license/1.0.0/source.json": "a52c89e54cc311196e478f8382df91c15f7a2bfdf4c6cd0e2675cc2ff0b56efb",
-    "https://bcr.bazel.build/modules/rules_mayhem/0.8.4/MODULE.bazel": "0cab2eab12f5ed7988dab97467e0e92063283b54b3c9a6d70642c06209c7355c",
-    "https://bcr.bazel.build/modules/rules_mayhem/0.8.4/source.json": "5376cc343a015a8896c3c6a8aae4c80c967d3489298d7ab9ccc0cda46de57563",
+    "https://bcr.bazel.build/modules/rules_mayhem/0.8.6/MODULE.bazel": "032a67aea928585326798f58c1c827f15c2fcc3f6f4e5dc63a55bae34e935cee",
+    "https://bcr.bazel.build/modules/rules_mayhem/0.8.6/source.json": "1987a165887ce0444be5c475c628cca0ca5a466aa46c185785f25b6786b44756",
     "https://bcr.bazel.build/modules/rules_oci/2.2.7/MODULE.bazel": "f6150e4b224d459f7f6523ef65967464ca4efdd266c7fbf2f5a2a51011957e0c",
     "https://bcr.bazel.build/modules/rules_oci/2.2.7/source.json": "b099f02af330f47f19dc67fc9300ef6e1937a8c86882690db0e7a2fcea8c7f6b",
     "https://bcr.bazel.build/modules/rules_pkg/0.7.0/MODULE.bazel": "df99f03fc7934a4737122518bb87e667e62d780b610910f0447665a7e2be62dc",
@@ -323,11 +323,11 @@
     "@@rules_mayhem+//mayhem:extensions.bzl%rules_mayhem_extension": {
       "general": {
         "bzlTransitiveDigest": "SUFcWZq0Nc0sjSX728mHdDz01rb3+thUWiQBxjMbYsA=",
-        "usagesDigest": "PCowiDL0XxUWSj9zyoaYmcMRL65O+5Ar7M4AP/JMEA0=",
+        "usagesDigest": "K4chEhtXLuew+ffWsawtvlPQKUOiBKYudEiAcy+P9VQ=",
         "recordedInputs": [
           "REPO_MAPPING:rules_mayhem+,bazel_tools bazel_tools",
           "REPO_MAPPING:rules_mayhem+,rules_mayhem rules_mayhem+",
-          "ENV:MAYHEM_URL https://app.mayhem.security"
+          "ENV:MAYHEM_URL \\0"
         ],
         "generatedRepoSpecs": {
           "mayhem_cli_linux": {

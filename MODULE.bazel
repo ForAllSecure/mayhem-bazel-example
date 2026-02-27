@@ -1,8 +1,8 @@
 bazel_dep(name = "googletest", version = "1.17.0.bcr.2")
 bazel_dep(name = "rules_pkg", version = "1.2.0")
 bazel_dep(name = "rules_fuzzing", version = "0.6.0")
-bazel_dep(name = "rules_mayhem", version = "0.8.4")
-bazel_dep(name = "rules_cc", version = "0.2.16")
+bazel_dep(name = "rules_mayhem", version = "0.8.6")
+bazel_dep(name = "rules_cc", version = "0.2.17")
 
 # Note: This is a temporary workaround to avoid pulling in v2.7.2, as this includes support for
 # the incompatible 'local_config_platform' (see https://github.com/bazelbuild/bazel/issues/22080)

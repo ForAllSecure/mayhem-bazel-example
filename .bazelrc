@@ -1,8 +1,8 @@
 # Enable platform-specific features
 common --enable_platform_specific_config=true
 
-# Windows stuff
-# common:windows --enable_runfiles
+# Test for when runfiles are not supported
+common:windows --enable_runfiles=false
 
 # Set default Mayhem URL and config home
 common --action_env=MAYHEM_URL

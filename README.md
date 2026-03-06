@@ -43,13 +43,13 @@ bazel build //main:calculator
 ## To package calculator target
 
 ```bash
-bazel build //mayhem:package_calculator
+bazel build //mayhem:calculator_package
 ```
 
 ## To run calculator target
 
 ```bash
-bazel run //mayhem:run_package_calculator 
+bazel run //mayhem:run_calculator_package
 ```
 
 The above works with the test target `//test:test_calculator` as well.

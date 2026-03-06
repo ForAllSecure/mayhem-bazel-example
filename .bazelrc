@@ -2,7 +2,7 @@
 common --enable_platform_specific_config=true
 
 # Windows stuff
-common:windows --enable_runfiles
+# common:windows --enable_runfiles
 
 # Set default Mayhem URL and config home
 common --action_env=MAYHEM_URL
